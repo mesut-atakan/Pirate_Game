@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -54,6 +54,39 @@ namespace Character
 
         
         [SerializeField] private Vector2 groundCheckTransformSize;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        [Space(15.0f), Header("Slip Properties")]
+
+        [Tooltip("`DEMO` Enter the size of the character as the character scrolls!")]
+        [SerializeField] private Vector2 characterSize;
+
+        
+        [Tooltip("Enter how long the character will be dragged on the ground!")]
+        [SerializeField, Range(0.0f, 3.0f)] private float slipTime = 1.0f;
+
+
+        [Tooltip("Enter how long the character can drift!")]
+        [SerializeField, Range(0.0f, 5.0f)] private float reSlipTime = 3.0f; 
+
+
+        [Tooltip("Specify how much faster the character's speed will be when the character is drifting!")]
+        [SerializeField, Range(0.0f, +5.0f)] private float characterSlipSpeed = 0.4f;
+
+
 
 
 

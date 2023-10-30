@@ -265,9 +265,9 @@ GameObject:
   - component: {fileID: 392660625}
   - component: {fileID: 392660626}
   m_Layer: 7
-  m_Name: Square (2)
+  m_Name: Platform
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -525,9 +525,9 @@ GameObject:
   - component: {fileID: 799387055}
   - component: {fileID: 799387056}
   m_Layer: 7
-  m_Name: Square (6)
+  m_Name: Platform
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -655,9 +655,9 @@ GameObject:
   - component: {fileID: 828049612}
   - component: {fileID: 828049613}
   m_Layer: 7
-  m_Name: Square (7)
+  m_Name: Platform
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -785,9 +785,9 @@ GameObject:
   - component: {fileID: 939828137}
   - component: {fileID: 939828138}
   m_Layer: 7
-  m_Name: Square
+  m_Name: Platform
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -1067,8 +1067,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78e05ed14db434340a4d3a2bf05bf376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerController: {fileID: 1533878755}
+  mapIllusion: {fileID: 1107425519}
   inputManager:
-    characterScrollKey: 115
+    characterSlipKey: 99
+    characterPlatformDownKey: 115
+    characterJumpKey: 32
 --- !u!4 &1027165680
 Transform:
   m_ObjectHideFlags: 0
@@ -1287,9 +1291,9 @@ GameObject:
   - component: {fileID: 1323226261}
   - component: {fileID: 1323226262}
   m_Layer: 7
-  m_Name: Square (3)
+  m_Name: Platform
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -1417,9 +1421,9 @@ GameObject:
   - component: {fileID: 1530444576}
   - component: {fileID: 1530444577}
   m_Layer: 7
-  m_Name: Square (4)
+  m_Name: Platform
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -1535,6 +1539,17 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1533878755 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6335612141807345130, guid: 411f36d849c27a94cbaca6def8cc3f5c, type: 3}
+  m_PrefabInstance: {fileID: 6742850646574479525}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05cdef9a988017b49a71cd22e7452627, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6742850646574479525
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1595,6 +1610,10 @@ PrefabInstance:
       propertyPath: jumpForce
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 6335612141807345130, guid: 411f36d849c27a94cbaca6def8cc3f5c, type: 3}
+      propertyPath: gameManager
+      value: 
+      objectReference: {fileID: 1027165679}
     - target: {fileID: 6335612141807345130, guid: 411f36d849c27a94cbaca6def8cc3f5c, type: 3}
       propertyPath: forwardSpeed
       value: 4.78
