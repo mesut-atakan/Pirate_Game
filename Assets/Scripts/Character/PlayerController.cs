@@ -273,19 +273,27 @@ namespace Character
             // Timer End
             this._characterIsSlip = false;
             this._isSlipTimer = true;
+            SlipTimer();
         }
 
 
 
 
 
-
+        /// <summary>
+        /// With this method, you can make the character slide at certain intervals!
+        /// </summary>
         internal void SlipTimer()
         {
             if (this._slipIsAllowed == false)
             {
-                this._slipTimer += Time.deltaTime;
-                
+                while (this._slipTimer < this.reSlipTime)
+                {
+                    this._slipTimer += Time.deltaTime;
+                    continue;
+                }
+
+                this._characterIsSlip = true;
             }
         }
     }

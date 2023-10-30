@@ -10,7 +10,7 @@ internal struct InputManager
     [Header("Controller Keys")]
 
     [Tooltip("Enter the key that the player must press to make the character drift on the ground!")]
-    [SerializeField] private KeyCode characterScrollKey;
+    [SerializeField] private KeyCode characterSlipKey;
 
 
 
@@ -40,7 +40,7 @@ internal struct InputManager
 
 #region ||~~~~~|| X ||~~~~~|| PROPERTIES ||~~~~~|| X ||~~~~~||
 
-    internal KeyCode _characterScrollKey { get => this.characterScrollKey; } 
+    internal KeyCode _characterSlipKey { get => this.characterSlipKey; } 
 
     internal KeyCode _characterJumpKey { get => this.characterJumpKey; }
 

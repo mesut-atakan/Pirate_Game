@@ -63,8 +63,15 @@ internal class GameManager : MonoBehaviour
             StartCoroutine(this.playerController.FallDown());
         }
 
+        if (Input.GetKey(this.inputManager._characterSlipKey))
+        {
+            StartCoroutine(this.playerController.Slip());
+        }
+
+        this.playerController.SlipTimer();
 
 
+        this.playerController.SlipTimer();
 
 #endregion ||~~~~~|| X ||~~~~~|| X  X   X   X ||~~~~~|| X ||~~~~~||
     }
