@@ -10,6 +10,12 @@ namespace Character
     {
 #region ||~~~~~|| X ||~~~~~|| SERIALIZE FIELDS ||~~~~~|| X ||~~~~~||
 
+        [Header("Classes")]
+
+        [SerializeField] private GameManager gameManager;
+
+
+
         [Header("CharcterProperties")]
 
         [Tooltip("Enter the character's forward speed")]
@@ -57,28 +63,6 @@ namespace Character
 
 
 
-        [Space(15f), Header("Character Slip Properties")]
-
-        [Tooltip("Enter the duration of the character's dragging on the ground!")]
-        [SerializeField] private float slipTime = 1f;
-
-
-        [Tooltip("Enter how long it takes for the character to slide!")]
-        [SerializeField] private float reSlipTime = 3f;
-
-
-        [Tooltip("Enter how much faster the character will be while sliding than its current speed!")]
-        [SerializeField, Range(-0.5f, 3.0f)] private float slipSpeed = 0.4f;
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -116,10 +100,7 @@ namespace Character
         private bool _isGround = false;     // With this variable, we will understand whether the character will contact the ground or not!
 
         private bool _isPlatform = false;   // With this variable, we will understand whether the character is on a platform or not.
-    
-        private bool _characterIsSlip = false;  // bu boolean ile karakterin anlik olarak kayip kaymadigini kontrol edecegiz!
 
-        private bool _slipIsAllowed = true;
 #endregion ||~~~~~|| X ||~~~~~|| X  X   X   X ||~~~~~|| X ||~~~~~||
 
 
@@ -135,13 +116,6 @@ namespace Character
         internal Vector2 _groundCheckTransformSize { get => this.groundCheckTransformSize; }
 
         internal Transform _groundCheckTransform { get => this.groundCheckTransform; }
-
-
-
-        
-        internal float _slipTimer { get; set; } = 0.0f;
-        internal bool _isSlipTimer { get; set; } = false;
-
 
 #endregion ||~~~~~|| X ||~~~~~|| X  X   X   X ||~~~~~|| X ||~~~~~||
 
@@ -172,25 +146,21 @@ namespace Character
             _horizontal = Input.GetAxisRaw("Horizontal");
 
             // If the character does not scroll
-            if (!this._characterIsSlip)
+            
+            
+            if (_horizontal > 0 && this.transform.position.x <= 8)
             {
-                if (_horizontal > 0 && this.transform.position.x <= 8)
-                {
-                    _characterSpeed = this.forwardSpeed;
-                }
-                else if (_horizontal < 0 && this.transform.position.x >= -8)
-                {
-                    _characterSpeed = this.backwardSpeed;
-                }
-                else
-                {
-                    _characterSpeed = 0;
-                }
+                _characterSpeed = this.forwardSpeed;
             }
-            else // if the character is slipping
+            else if (_horizontal < 0 && this.transform.position.x >= -8)
             {
-                _characterSpeed = this.forwardSpeed + this.slipSpeed;
+                _characterSpeed = this.backwardSpeed;
             }
+            else
+            {
+                _characterSpeed = 0;
+            }
+            
 
 
 
@@ -242,58 +212,6 @@ namespace Character
                 this.collider.excludeLayers = this.platformLayerMask;
                 yield return new WaitForSeconds(0.47f);
                 this.collider.excludeLayers = 0;
-            }
-        }
-
-
-
-
-
-
-
-
-
-
-        /// <summary>
-        /// With this method, the character will be able to slide on the ground!
-        /// </summary>
-        /// <returns></returns>
-        internal IEnumerator Slip()
-        {
-            // if the character is not in contact with any ground
-            if (!this._isGround) yield return null;
-            
-            // Timer Start
-            this._isSlipTimer = false;
-            this._characterIsSlip = true;
-            Debug.Log("Karakter Kayiyor!");
-
-            yield return new WaitForSeconds(slipTime);
-
-            // Timer End
-            this._characterIsSlip = false;
-            this._isSlipTimer = true;
-            SlipTimer();
-        }
-
-
-
-
-
-        /// <summary>
-        /// With this method, you can make the character slide at certain intervals!
-        /// </summary>
-        internal void SlipTimer()
-        {
-            if (this._slipIsAllowed == false)
-            {
-                while (this._slipTimer < this.reSlipTime)
-                {
-                    this._slipTimer += Time.deltaTime;
-                    continue;
-                }
-
-                this._characterIsSlip = true;
             }
         }
     }
