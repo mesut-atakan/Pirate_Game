@@ -23,17 +23,14 @@ internal class MapIllusion : MonoBehaviour
 
 
 
-    private void LateUpdate() {
-        MapMove();
-    }
-
-// Dönüşümü çeviri yönünde ve uzaklığında hareket ettirir.
 
 
 
 
 
-    private void MapMove()
+
+
+    internal void MapMove()
     {
         this.transform.position = new Vector2(this.transform.position.x - this.mapSpeed * Time.deltaTime, this.transform.position.y);
     }
