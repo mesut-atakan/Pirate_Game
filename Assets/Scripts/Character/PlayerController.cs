@@ -165,6 +165,32 @@ namespace Character
 
 
 
+        private void OnTriggerEnter2D(Collider2D other) {
+            Debug.Log(other.gameObject.name);
+            if (other.gameObject.layer == LayerMask.NameToLayer("Skill"))
+            {
+                Debug.Log("A");
+                if (other.gameObject.tag == "DoubleJump")
+                {
+                    this._doubleJump = true;
+                    other.gameObject.SetActive(false);
+                }
+            }
+            
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -195,11 +221,11 @@ namespace Character
             else
             {
                 _horizontal = Input.GetAxisRaw("Horizontal");
-                if (_horizontal > 0 && this.transform.position.x <= 8)
+                if (_horizontal > 0 && this.transform.position.x <= this.gameManager._cameraXMax)
                 {
                     _characterSpeed = this.forwardSpeed;
                 }
-                else if (_horizontal < 0 && this.transform.position.x >= -8)
+                else if (_horizontal < 0 && this.transform.position.x >= this.gameManager._cameraXMin)
                 {
                     _characterSpeed = this.backwardSpeed;
                 }
@@ -236,6 +262,13 @@ namespace Character
             if (this._isGround)
             {
                 this.rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                return;
+            }
+            else if (this._doubleJump)
+            {
+                this.rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                this._doubleJump = false;
+                return;
             }
         }
 

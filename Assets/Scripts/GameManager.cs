@@ -18,6 +18,21 @@ internal class GameManager : MonoBehaviour
 
 
 
+
+
+
+
+
+
+
+
+    [Header("Components")]
+
+    [Tooltip("Insert the camera in the scene here!")]
+    [SerializeField] private Camera mainCamera;
+
+
+
 #endregion ||~~~~~|| X ||~~~~~|| X  X   X   X ||~~~~~|| X ||~~~~~||
 
 
@@ -28,11 +43,37 @@ internal class GameManager : MonoBehaviour
 
 
 
-#region Private Fields
+#region ||~~~~~|| X ||~~~~~|| PRIVATE FIELDS ||~~~~~|| X ||~~~~~||
 
     internal bool _slipTimerStart { get; set; } = true;
 
-#endregion
+
+
+
+    // ~~ Camera ~~
+    private float _cameraHeight;
+    private float _cameraWidth;
+
+#endregion ||~~~~~|| X ||~~~~~|| X  X   X   X ||~~~~~|| X ||~~~~~||
+
+
+
+
+
+
+
+
+
+
+
+
+#region ||~~~~~|| X ||~~~~~|| PROPERTIES ||~~~~~|| X ||~~~~~||
+
+    internal float _cameraXMin { get; set; }
+    internal float _cameraXMax { get; set; }
+    
+
+#endregion ||~~~~~|| X ||~~~~~|| X  X   X   X ||~~~~~|| X ||~~~~~||
 
 
 
@@ -47,6 +88,31 @@ internal class GameManager : MonoBehaviour
 
 
 
+
+    private void Awake() {
+        this.mainCamera = Camera.main;
+    }
+
+
+
+
+
+
+
+
+
+    private void Start() {
+        // We used it to calculate the boundaries of objects within the camera angle
+        this._cameraHeight = 2f * this.mainCamera.orthographicSize;
+        this._cameraWidth = _cameraHeight * mainCamera.aspect;
+
+        // The center position of the camera will be found!
+        Vector2 _cameraPosition = this.mainCamera.transform.position;
+
+        // Minimum and maximum values ​​on the x-axis entering the camera angle!
+        this._cameraXMin = _cameraPosition.x - this._cameraWidth / 2;
+        this._cameraXMax = _cameraPosition.x + _cameraWidth / 2;
+    }
 
 
 
@@ -67,10 +133,6 @@ internal class GameManager : MonoBehaviour
 #region ||~~~~~|| X ||~~~~~|| PLAYER ||~~~~~|| X ||~~~~~||
         this.playerController.Move();
 
-        if (Input.GetKey(inputManager._characterJumpKey))
-        {
-            this.playerController.Jump();
-        }
 
         if (Input.GetKey(this.inputManager._characterPlatformDownKey))
         {
@@ -88,6 +150,11 @@ internal class GameManager : MonoBehaviour
     {
 #region ||~~~~~|| X ||~~~~~|| PLAYER ||~~~~~|| X ||~~~~~||
 
+        if (Input.GetKeyDown(inputManager._characterJumpKey))
+        {
+            this.playerController.Jump();
+        }
+        
         if (Input.GetKeyDown(this.inputManager._characterSlipKey))
         {
             StartCoroutine(this.playerController.Slip());
