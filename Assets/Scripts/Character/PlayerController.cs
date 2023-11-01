@@ -134,6 +134,14 @@ namespace Character
 
         private bool _isPlatform = false;   // With this variable, we will understand whether the character is on a platform or not.
 
+        // ~~ SLIP ~~
+        private bool _characterIsSlip = false;  // The variable that will control whether the character momentarily slides or not!
+
+        private bool _canSlip = true;       // Variable that controls whether the character can be dragged on the ground or not!
+
+
+        // double jump
+        private bool _doubleJump = false;
 #endregion ||~~~~~|| X ||~~~~~|| X  X   X   X ||~~~~~|| X ||~~~~~||
 
 
@@ -173,31 +181,38 @@ namespace Character
         {
             // ~~ Variables ~~
             // The data of whether the player presses a key on the horizontal axis or not will be stored in this variable!
-            float _horizontal;
-            float _characterSpeed;
+            float _horizontal = 0.0f;
+            float _characterSpeed = 0.0f;
             
-            _horizontal = Input.GetAxisRaw("Horizontal");
 
             // If the character does not scroll
-            
-            
-            if (_horizontal > 0 && this.transform.position.x <= 8)
+
+            if (this._characterIsSlip)
             {
-                _characterSpeed = this.forwardSpeed;
-            }
-            else if (_horizontal < 0 && this.transform.position.x >= -8)
-            {
-                _characterSpeed = this.backwardSpeed;
+                _characterSpeed = this.forwardSpeed + this.characterSlipSpeed;
+                this.rb.velocity = new Vector2(_characterSpeed * characterSpeedMultiply * Time.deltaTime, this.rb.velocity.y);
             }
             else
             {
-                _characterSpeed = 0;
+                _horizontal = Input.GetAxisRaw("Horizontal");
+                if (_horizontal > 0 && this.transform.position.x <= 8)
+                {
+                    _characterSpeed = this.forwardSpeed;
+                }
+                else if (_horizontal < 0 && this.transform.position.x >= -8)
+                {
+                    _characterSpeed = this.backwardSpeed;
+                }
+                else
+                {
+                    _characterSpeed = 0;
+                }
+                this.rb.velocity = new Vector2(_characterSpeed * _horizontal * characterSpeedMultiply * Time.deltaTime, this.rb.velocity.y);
             }
+            
             
 
 
-
-            this.rb.velocity = new Vector2(_characterSpeed * _horizontal * characterSpeedMultiply * Time.deltaTime, this.rb.velocity.y);
         }
 
 
@@ -246,6 +261,41 @@ namespace Character
                 yield return new WaitForSeconds(0.47f);
                 this.collider.excludeLayers = 0;
             }
+        }
+
+
+
+
+
+
+
+        /// <summary>
+        /// The method that must be used to make the character drift on the ground!
+        /// </summary>
+        internal IEnumerator Slip()
+        {
+            // We check whether the character is momentarily dragged on the ground and whether he can stay at the moment!
+            if (!this._characterIsSlip && this._canSlip) 
+            {
+                this._characterIsSlip = true;       // We mark the `_characterIsSlip` variable as true to indicate that the character is dragging on the ground!
+                this.transform.localScale = characterSize;  // We change the value of the character to see if the character is drifting momentarily!
+
+                yield return new WaitForSeconds(this.slipTime); // We are entering the waiting period!
+
+                this.transform.localScale = new Vector2(1, 1);      // We are correcting the character's scale values!
+                this._characterIsSlip = false;                  // We state that the character is now dragging on the ground!
+                this._canSlip = false;
+                StartCoroutine(SlipWaitter());
+            }
+        }
+
+
+
+
+        private IEnumerator SlipWaitter()
+        {
+            yield return new WaitForSeconds(this.reSlipTime);
+            this._canSlip = true;
         }
     }
 }

@@ -158,9 +158,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05cdef9a988017b49a71cd22e7452627, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forwardSpeed: 5
+  gameManager: {fileID: 0}
+  forwardSpeed: 4.78
   backwardSpeed: 2
-  jumpForce: 2
+  jumpForce: 15
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 384
@@ -169,8 +170,12 @@ MonoBehaviour:
     m_Bits: 128
   groundCheckTransform: {fileID: 8452963799240729780}
   groundCheckTransformSize: {x: 0.66, y: 0.12}
+  characterSize: {x: 1, y: 0.65}
+  slipTime: 0.55
+  reSlipTime: 3
+  characterSlipSpeed: 0.43
   rb: {fileID: 6359718803844346750}
-  collider: {fileID: 0}
+  collider: {fileID: 5315956607612647652}
 --- !u!70 &5315956607612647652
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
