@@ -131,12 +131,21 @@ internal class GameManager : MonoBehaviour
     private void FixedUpdate() {
 
 #region ||~~~~~|| X ||~~~~~|| PLAYER ||~~~~~|| X ||~~~~~||
+
         this.playerController.Move();
 
 
         if (Input.GetKey(this.inputManager._characterPlatformDownKey))
         {
             StartCoroutine(this.playerController.FallDown());
+        }
+
+
+
+
+        if (this.playerController._flyPrp)
+        {
+            this.playerController.FlyControl();
         }
 
 
@@ -150,15 +159,32 @@ internal class GameManager : MonoBehaviour
     {
 #region ||~~~~~|| X ||~~~~~|| PLAYER ||~~~~~|| X ||~~~~~||
 
-        if (Input.GetKeyDown(inputManager._characterJumpKey))
+        if (!this.playerController._flyPrp)
         {
-            this.playerController.Jump();
+            // ~~ JUMP ~~
+            if (Input.GetKeyDown(inputManager._characterJumpKey))
+            {
+                this.playerController.Jump();
+            }
+
+            // ~~ SLIP ~~
+            if (Input.GetKeyDown(this.inputManager._characterSlipKey))
+            {
+                StartCoroutine(this.playerController.Slip());
+            }
+
+            // ~~ FLY ~~
+            if (Input.GetKeyDown(this.inputManager._characterFlyKey) && this.playerController._canFly)
+            {
+                this.playerController.FlyStart();
+            }
         }
+
+
+
+
+        this.playerController.Attack();
         
-        if (Input.GetKeyDown(this.inputManager._characterSlipKey))
-        {
-            StartCoroutine(this.playerController.Slip());
-        }
 
 #endregion ||~~~~~|| X ||~~~~~|| X  X   X   X ||~~~~~|| X ||~~~~~||
     }
@@ -184,5 +210,11 @@ internal class GameManager : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawCube(this.playerController._groundCheckTransform.position, this.playerController._groundCheckTransformSize);
+    
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireCube(this.playerController._infightingAreaTransform.position, this.playerController._infightingAreaSize);
+    
+        Gizmos.color = Color.black;
+        Gizmos.DrawCube(this.playerController._upPlatformControlTransform.position, this.playerController._groundCheckTransformSize);
     }
 }

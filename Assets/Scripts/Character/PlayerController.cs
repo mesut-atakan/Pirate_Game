@@ -1,5 +1,6 @@
 using System.Collections;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 
@@ -59,6 +60,15 @@ namespace Character
 
 
 
+        [Header("Jump Up Platform Control")]
+
+        [Tooltip("Enter the transform component of the Object that will check whether there is a platform on the character or not!")]
+        [SerializeField] private Transform upPlatformControlTransform;
+
+
+
+
+
 
 
 
@@ -89,6 +99,63 @@ namespace Character
 
 
 
+
+
+
+
+
+
+
+        [Space(15f), Header("Fly Fields")]
+
+        [Tooltip("Enter the gravity value required for the character to fly!")]
+        [SerializeField, Range(0.05f, 2.5f)] private float characterFlyGravityScale = 0.15f;
+
+
+        [Tooltip("Enter how fast the character will go in the air!")]
+        [SerializeField, Range(0, 10)] private float flySpeed = 3.0f;
+
+
+        [Tooltip("karakter suzuklmeye baslarken ne kadar guc ile yukariya dogru ziplayacagini giriniz!")]
+        [SerializeField, Range(0, 3f)] private float flyJumpForce = 1.0f;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        [Space(15f), Header("Damage Fields")]
+
+
+        [Tooltip("How many melee hits will the opponent Maksimum take to die?")]
+        [SerializeField, Range(1, 10)] private ushort maxAttackDie = 1;
+
+        [Tooltip("Enter the size of the character's melee area")]
+        [SerializeField] private Vector2 infightingAreaSize;
+
+        [Tooltip("Add the Transform component of the Melee field to this variable!")]
+        [SerializeField] private Transform infightingAreaTransform;
+
+        
 
 
 
@@ -139,9 +206,20 @@ namespace Character
 
         private bool _canSlip = true;       // Variable that controls whether the character can be dragged on the ground or not!
 
-
+    #region Skills
         // double jump
         private bool _doubleJump = false;
+
+        // Fly
+        private bool _fly = false;
+    #endregion
+
+
+
+
+        // Timer
+        private float currentTime = 0.0f;
+        private float _maxUpPlatformControlTimer = 0.62f;
 #endregion ||~~~~~|| X ||~~~~~|| X  X   X   X ||~~~~~|| X ||~~~~~||
 
 
@@ -157,6 +235,21 @@ namespace Character
         internal Vector2 _groundCheckTransformSize { get => this.groundCheckTransformSize; }
 
         internal Transform _groundCheckTransform { get => this.groundCheckTransform; }
+
+        // ~~ Damage ~~
+        internal Vector2 _infightingAreaSize { get => this.infightingAreaSize; }
+        internal Transform _infightingAreaTransform { get => this.infightingAreaTransform; }
+
+
+        internal Transform _upPlatformControlTransform { get => this.upPlatformControlTransform; }
+
+        
+
+
+
+        internal bool _flyPrp { get => this._fly; }
+        internal bool _canFly { get; set; } = false;
+        internal GameObject _ramPlatform { get; set; }
 
 #endregion ||~~~~~|| X ||~~~~~|| X  X   X   X ||~~~~~|| X ||~~~~~||
 
@@ -175,8 +268,12 @@ namespace Character
                     this._doubleJump = true;
                     other.gameObject.SetActive(false);
                 }
+                else if (other.gameObject.CompareTag("Fly"))
+                {
+                    this._canFly = true;
+                    other.gameObject.SetActive(false);
+                }
             }
-            
         }
 
 
@@ -233,12 +330,10 @@ namespace Character
                 {
                     _characterSpeed = 0;
                 }
-                this.rb.velocity = new Vector2(_characterSpeed * _horizontal * characterSpeedMultiply * Time.deltaTime, this.rb.velocity.y);
+
+                if (!this._fly)
+                    this.rb.velocity = new Vector2(_characterSpeed * _horizontal * characterSpeedMultiply * Time.deltaTime, this.rb.velocity.y);
             }
-            
-            
-
-
         }
 
 
@@ -257,7 +352,7 @@ namespace Character
         {
             // ~~ Variables ~~
             
-            this._isGround = Physics2D.OverlapCapsule(this.groundCheckTransform.position, this.groundCheckTransformSize, CapsuleDirection2D.Horizontal, 0, this.groundLayerMask);
+            this._isGround = CharacterIsGround();
 
             if (this._isGround)
             {
@@ -268,8 +363,67 @@ namespace Character
             {
                 this.rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 this._doubleJump = false;
+
                 return;
             }
+        }
+
+
+
+        /// <summary>
+        /// Function that controls whether the character comes into contact with the ground or not
+        /// </summary>
+        /// <returns>If the character touches the ground, it will be true, otherwise it will be false!</returns>
+        private bool CharacterIsGround()
+        {
+            return Physics2D.OverlapCapsule(this.groundCheckTransform.position, this.groundCheckTransformSize, CapsuleDirection2D.Horizontal, 0, this.groundLayerMask);
+        }
+
+
+
+        /// <summary>
+        /// Returns the ground the character momentarily touches!
+        /// </summary>
+        /// <returns>If the character is not touching a ground, this method may return null!</returns>
+        private GameObject CharacterIsGroundObject()
+        {
+            return Physics2D.OverlapCapsule(this.groundCheckTransform.position, this.groundCheckTransformSize, CapsuleDirection2D.Horizontal, 0, this.groundLayerMask)?.gameObject;
+        }
+
+
+
+
+
+        private IEnumerator JumpPlatform()
+        {
+            // ~~ Variables ~~
+            GameObject _platform;
+            Collider2D _collider;
+
+            while (this.currentTime <= this._maxUpPlatformControlTimer)
+            {
+                _platform = Physics2D.OverlapBox(this.upPlatformControlTransform.position, this.groundCheckTransformSize, 0, this.platformLayerMask)?.gameObject;
+                if (_platform != null)
+                {
+                    Debug.Log("Ust tarfata platform var!!!!");
+                    _collider = _platform.GetComponent<Collider2D>();
+                    _collider.excludeLayers = this.gameObject.layer;
+                    StartCoroutine(JumpPlatformColliderClear(_collider));
+                    yield return null;
+                }
+                yield return new WaitForSeconds(0.1f);
+                this.currentTime += 0.1f;
+            }
+            this.currentTime = 0.0f;
+        }
+
+
+
+
+        private IEnumerator JumpPlatformColliderClear(Collider2D collider)
+        {
+            yield return new WaitForSeconds(0.5f);
+            collider.excludeLayers = 0;
         }
 
 
@@ -308,7 +462,7 @@ namespace Character
         internal IEnumerator Slip()
         {
             // We check whether the character is momentarily dragged on the ground and whether he can stay at the moment!
-            if (!this._characterIsSlip && this._canSlip) 
+            if (!this._characterIsSlip && this._canSlip && CharacterIsGround()) 
             {
                 this._characterIsSlip = true;       // We mark the `_characterIsSlip` variable as true to indicate that the character is dragging on the ground!
                 this.transform.localScale = characterSize;  // We change the value of the character to see if the character is drifting momentarily!
@@ -324,11 +478,74 @@ namespace Character
 
 
 
-
+        /// <summary>
+        /// With this method, you determine how quickly the character can slide!
+        /// </summary>
         private IEnumerator SlipWaitter()
         {
             yield return new WaitForSeconds(this.reSlipTime);
             this._canSlip = true;
+        }
+
+
+
+
+        /// <summary>
+        /// This method will be used for the character to attack!
+        /// </summary>
+        internal void Attack()
+        {
+            // ~~ Variables ~~
+            GameObject _interactionObject;
+
+            _interactionObject = Physics2D.OverlapBox(this.infightingAreaTransform.position, this.infightingAreaSize, 0.0f)?.gameObject;
+
+            if (_interactionObject == null) return;
+
+
+            
+            if (_interactionObject.tag == "Enemy")
+            {
+                _interactionObject.SetActive(false);
+                return;
+            }
+        }
+
+
+
+        /// <summary>
+        /// With this method, you can start the character floating in the air!
+        /// </summary>
+        internal void FlyStart()
+        {
+            this._ramPlatform = CharacterIsGroundObject();
+            this.rb.velocity = new Vector2(this.rb.velocity.x + this.forwardSpeed * this.flySpeed * characterSpeedMultiply * Time.deltaTime, this.rb.velocity.y);
+            this.rb.AddForce(Vector2.up * flyJumpForce, ForceMode2D.Impulse);
+            this._fly = true;
+            this.rb.gravityScale = this.characterFlyGravityScale;
+        }
+
+
+
+
+
+
+        internal void FlyControl()
+        {
+            if (CharacterIsGround() && this._ramPlatform != CharacterIsGroundObject())
+            {
+                this.rb.gravityScale = 2.5f;
+                this._fly = false;
+                this._canFly = false;
+            }
+            else
+            {
+                if (this.transform.position.x > this.gameManager._cameraXMax)
+                {
+                    this.transform.position = new Vector2(this.gameManager._cameraXMax, this.transform.position.y);
+                }
+
+            }
         }
     }
 }

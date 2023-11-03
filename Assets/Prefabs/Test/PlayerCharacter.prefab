@@ -40,9 +40,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2006518952322090261}
+  - component: {fileID: 6335612141807345130}
   - component: {fileID: 1097419854274061941}
   - component: {fileID: 6359718803844346750}
-  - component: {fileID: 6335612141807345130}
   - component: {fileID: 5315956607612647652}
   m_Layer: 0
   m_Name: PlayerCharacter
@@ -67,6 +67,41 @@ Transform:
   - {fileID: 8452963799240729780}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6335612141807345130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9015018632964121578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05cdef9a988017b49a71cd22e7452627, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
+  forwardSpeed: 4.78
+  backwardSpeed: 2
+  jumpForce: 15
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 384
+  platformLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  groundCheckTransform: {fileID: 8452963799240729780}
+  groundCheckTransformSize: {x: 0.66, y: 0.12}
+  upPlatformControlTransform: {fileID: 0}
+  characterSize: {x: 1, y: 0.65}
+  slipTime: 0.55
+  reSlipTime: 3
+  characterSlipSpeed: 0.43
+  characterFlyGravityScale: 0.15
+  maxAttackDie: 1
+  infightingAreaSize: {x: 0, y: 0}
+  infightingAreaTransform: {fileID: 0}
+  rb: {fileID: 6359718803844346750}
+  collider: {fileID: 5315956607612647652}
 --- !u!212 &1097419854274061941
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -146,36 +181,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &6335612141807345130
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9015018632964121578}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05cdef9a988017b49a71cd22e7452627, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  forwardSpeed: 4.78
-  backwardSpeed: 2
-  jumpForce: 15
-  groundLayerMask:
-    serializedVersion: 2
-    m_Bits: 384
-  platformLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
-  groundCheckTransform: {fileID: 8452963799240729780}
-  groundCheckTransformSize: {x: 0.66, y: 0.12}
-  characterSize: {x: 1, y: 0.65}
-  slipTime: 0.55
-  reSlipTime: 3
-  characterSlipSpeed: 0.43
-  rb: {fileID: 6359718803844346750}
-  collider: {fileID: 5315956607612647652}
 --- !u!70 &5315956607612647652
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
